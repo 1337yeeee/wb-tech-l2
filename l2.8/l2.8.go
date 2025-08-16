@@ -7,16 +7,32 @@ import (
 	"time"
 )
 
-func main() {
-	const NtpServer = "1.ru.pool.ntp.org"
+// TimeProvider определяет интерфейс для получения времени от указанного сервера.
+type TimeProvider interface {
+	Now(server string) (time.Time, error)
+}
 
-	ntpTime, err := ntp.Query(NtpServer)
+// NTPProvider реализует TimeProvider и получает время через NTP.
+type NTPProvider struct{}
+
+// Now возвращает текущее время с указанного NTP-сервера.
+// В случае ошибки возвращает нулевое значение time.Time и ошибку.
+func (NTPProvider) Now(server string) (time.Time, error) {
+	return ntp.Time(server)
+}
+
+func main() {
+	const ntpServer = "1.ru.pool.ntp.org"
+
+	var ntpTimeProvider TimeProvider = NTPProvider{}
+
+	ntpTime, err := ntpTimeProvider.Now(ntpServer)
 	if err != nil {
-		_, _ = fmt.Fprintln(os.Stderr, "NTP Error: ", err)
+		_, _ = fmt.Fprintln(os.Stderr, "NTP Error:", err)
 		os.Exit(1)
 	}
 
-	fmt.Println(ntpTime.Time.Format(time.RFC1123Z))
+	fmt.Println(ntpTime.Format(time.RFC1123Z))
 }
 
 // Вывод программы:
