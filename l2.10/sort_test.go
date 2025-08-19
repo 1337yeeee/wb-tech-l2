@@ -65,10 +65,10 @@ func TestParseHuman(t *testing.T) {
 
 // TestLessSortNumeric проверяет функцию lessSort с флагом -n
 func TestLessSortNumeric(t *testing.T) {
-	lines := []string{"10", "2", "30"}
-
 	resetFlags()
 	*numFlag = true
+
+	lines := []string{"10", "2", "30"}
 
 	sort.Slice(lines, lessSort(lines))
 
@@ -83,10 +83,10 @@ func TestLessSortNumeric(t *testing.T) {
 
 // TestLessSortReverse проверяет функцию lessSort с флагом -r
 func TestLessSortReverse(t *testing.T) {
-	lines := []string{"a", "c", "b"}
-
 	resetFlags()
 	*reverse = true
+
+	lines := []string{"a", "c", "b"}
 
 	sort.Slice(lines, lessSort(lines))
 
@@ -101,11 +101,11 @@ func TestLessSortReverse(t *testing.T) {
 
 // TestLessSortReverse проверяет функцию lessSort с флагом -M
 func TestLessSortMonth(t *testing.T) {
-	// последнее значение ("Feb ") с дополнительным пробелом, должно идти после значения без пробела
-	lines := []string{"Mar", "Feb", "Jan", "Feb "}
-
 	resetFlags()
 	*monthFlag = true
+
+	// последнее значение ("Feb ") с дополнительным пробелом, должно идти после значения без пробела
+	lines := []string{"Mar", "Feb", "Jan", "Feb "}
 
 	sort.Slice(lines, lessSort(lines))
 
@@ -120,10 +120,10 @@ func TestLessSortMonth(t *testing.T) {
 
 // TestLessSortReverse проверяет функцию lessSort с флагом -h
 func TestLessSortHuman(t *testing.T) {
-	lines := []string{"2K", "1M", "2048", "512"}
-
 	resetFlags()
 	*human = true
+
+	lines := []string{"2K", "1M", "2048", "512"}
 
 	sort.Slice(lines, lessSort(lines))
 
@@ -222,5 +222,86 @@ func TestCheckSorted_Reverse(t *testing.T) {
 	lines := []string{"c", "b", "a"}
 	if err := checkSorted(lines); err != nil {
 		t.Errorf("expected sorted in reverse, got error %v", err)
+	}
+}
+
+// TestSortByColumn проверяет сортировку по колонке с флагом -k 1
+func TestSortByColumn(t *testing.T) {
+	resetFlags()
+	lines := []string{
+		"3\tapple",
+		"1\tpear",
+		"2\tbanana",
+	}
+
+	*colFlag = 1
+	*numFlag = true
+	sort.Slice(lines, lessSort(lines))
+
+	want := []string{
+		"1\tpear",
+		"2\tbanana",
+		"3\tapple",
+	}
+
+	for i := range want {
+		if lines[i] != want[i] {
+			t.Errorf("sort by col=1 numeric failed: got %v, want %v", lines, want)
+			break
+		}
+	}
+}
+
+// TestSortByColumn проверяет сортировку по колонке с флагом -k 2
+func TestSortBySecondColumn(t *testing.T) {
+	resetFlags()
+	lines := []string{
+		"1\tpear",
+		"2\tbanana",
+		"3\tapple",
+	}
+
+	*colFlag = 2
+	*numFlag = false
+	sort.Slice(lines, lessSort(lines))
+
+	want := []string{
+		"3\tapple",
+		"2\tbanana",
+		"1\tpear",
+	}
+
+	for i := range want {
+		if lines[i] != want[i] {
+			t.Errorf("sort by col=2 alpha failed: got %v, want %v", lines, want)
+			break
+		}
+	}
+}
+
+// TestSortByColumn проверяет сортировку по колонке с флагом -r -k 1
+func TestSortBySecondColumnReverse(t *testing.T) {
+	resetFlags()
+	lines := []string{
+		"1\tpear",
+		"2\tbanana",
+		"3\tapple",
+	}
+
+	*colFlag = 2
+	*reverse = true
+	sort.Slice(lines, lessSort(lines))
+
+	want := []string{
+		"1\tpear",
+		"2\tbanana",
+		"3\tapple",
+	}
+
+	for i := range want {
+		if lines[i] != want[i] {
+			t.Errorf("sort by col=2 reverse failed: got %v, want %v", lines, want)
+			break
+		}
 	}
 }
