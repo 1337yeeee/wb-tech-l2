@@ -1,0 +1,6 @@
+error 404
+warning: something
+info: started
+error 500
+debug: connection
+info: completed

@@ -1,0 +1,7 @@
+Hello world
+This is a test
+Another line
+Test pattern here
+More text
+Final test line
+End of file
