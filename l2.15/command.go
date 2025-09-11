@@ -12,6 +12,10 @@ import (
 	"syscall"
 )
 
+// Command - выполняемая команда, содержащая информацию о самой команду (name, args)
+// потоки ввода и вывода (input, output), опцию редиректа в файл (appendOut)
+// код завершения команды (exitCode), ошибка выполнения команды (err),
+// указатель на shell, указатель на команду из пакета exec (cmd)
 type Command struct {
 	name      string
 	args      []string
